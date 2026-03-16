@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VOICEBOX</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: rgba(255, 255, 255, 0.06);
+      --panel-border: rgba(255, 255, 255, 0.12);
+      --text: #eef2ff;
+      --muted: #b7bfdc;
+      --accent: #8b5cf6;
+      --accent-2: #22c55e;
+      --shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      min-height: 100%;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(139, 92, 246, 0.22), transparent 32%),
+        radial-gradient(circle at top right, rgba(34, 197, 94, 0.14), transparent 28%),
+        linear-gradient(180deg, #0b1020 0%, #11172a 100%);
+      color: var(--text);
+    }
+
+    body {
+      padding: 32px 18px 56px;
+    }
+
+    .shell {
+      max-width: 980px;
+      margin: 0 auto;
+    }
+
+    .hero {
+      padding: 34px 28px;
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      border-radius: 28px;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      box-shadow: var(--shadow);
+      margin-bottom: 22px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .brand-mark {
+      width: 14px;
+      height: 14px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      box-shadow: 0 0 24px rgba(139, 92, 246, 0.6);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2rem, 5vw, 3.8rem);
+      letter-spacing: 0.08em;
+      font-weight: 800;
+    }
+
+    .subtitle {
+      margin: 12px 0 0;
+      max-width: 700px;
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.65;
+    }
+
+    .search-panel {
+      margin-top: 24px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .search-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .search-wrap {
+      flex: 1 1 520px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 18px;
+      padding: 12px 16px;
+    }
+
+    .search-wrap input {
+      appearance: none;
+      border: none;
+      outline: none;
+      background: transparent;
+      color: var(--text);
+      width: 100%;
+      font-size: 1rem;
+    }
+
+    .search-wrap input::placeholder {
+      color: #98a2c7;
+    }
+
+    button {
+      appearance: none;
+      border: none;
+      cursor: pointer;
+      border-radius: 16px;
+      padding: 12px 18px;
+      font-weight: 700;
+      font-size: 0.96rem;
+      transition: transform 0.15s ease, opacity 0.15s ease, background 0.15s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    .primary-btn {
+      background: linear-gradient(135deg, var(--accent), #7c3aed);
+      color: white;
+      box-shadow: 0 14px 30px rgba(124, 58, 237, 0.28);
+    }
+
+    .secondary-btn {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      color: var(--muted);
+      font-size: 0.94rem;
+      margin-top: 6px;
+    }
+
+    .status,
+    .results {
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+    }
+
+    .status {
+      padding: 16px 18px;
+      margin-bottom: 18px;
+      color: var(--muted);
+    }
+
+    .status strong {
+      color: var(--text);
+    }
+
+    .results {
+      padding: 18px;
+    }
+
+    .results-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .results-header h2 {
+      margin: 0;
+      font-size: 1.15rem;
+    }
+
+    .result-list {
+      display: grid;
+      gap: 14px;
+    }
+
+    .result-card {
+      display: block;
+      padding: 18px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: inherit;
+      text-decoration: none;
+      transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+    }
+
+    a.result-card:hover {
+      transform: translateY(-1px);
+      border-color: rgba(139, 92, 246, 0.45);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    a.result-card:focus-visible {
+      outline: 2px solid rgba(139, 92, 246, 0.85);
+      outline-offset: 3px;
+    }
+
+    .result-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+
+    .result-title {
+      margin: 0;
+      font-size: 1.05rem;
+      font-weight: 700;
+      word-break: break-word;
+    }
+
+    .score {
+      color: #d8d0ff;
+      font-size: 0.9rem;
+      white-space: nowrap;
+    }
+
+    .snippet {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.65;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    mark {
+      background: rgba(139, 92, 246, 0.28);
+      color: #f6f3ff;
+      padding: 0 0.14em;
+      border-radius: 0.24em;
+    }
+
+    .empty {
+      padding: 22px;
+      text-align: center;
+      color: var(--muted);
+      border: 1px dashed rgba(255, 255, 255, 0.14);
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .footer-note {
+      margin-top: 14px;
+      color: #95a0c8;
+      font-size: 0.88rem;
+    }
+
+    code {
+      background: rgba(255,255,255,0.08);
+      padding: 0.15em 0.4em;
+      border-radius: 8px;
+      font-size: 0.95em;
+    }
+
+    @media (max-width: 640px) {
+      body {
+        padding: 18px 12px 40px;
+      }
+
+      .hero,
+      .results,
+      .status {
+        border-radius: 20px;
+      }
+
+      .search-row {
+        flex-direction: column;
+      }
+
+      .search-wrap,
+      .search-row button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <section class="hero">
+      <div class="brand">
+        <div class="brand-mark"></div>
+        <div>Local Document Search</div>
+      </div>
+
+      <h1>VOICEBOX</h1>
+
+      <p class="subtitle">
+        Search your local document set entirely in the browser. This page expects
+        <code>lunr.min.js</code> and <code>documents.js</code> beside
+        <code>index.html</code>. The <code>documents.js</code> file should define a
+        global <code>DOCUMENTS</code> array in the form
+        <code>[{ filename: "file", filecontent: "content" }]</code>.
+      </p>
+
+      <div class="search-panel">
+        <div class="search-row">
+          <div class="search-wrap">
+            <span aria-hidden="true">🔎</span>
+            <input id="searchInput" type="text" placeholder="Search documents..." autocomplete="off" />
+          </div>
+          <button id="searchBtn" class="primary-btn">Search</button>
+          <button id="clearBtn" class="secondary-btn">Clear</button>
+        </div>
+
+        <div class="meta">
+          <span id="docCount">Documents: —</span>
+          <span id="indexState">Index: Loading…</span>
+        </div>
+      </div>
+    </section>
+
+    <div class="status" id="statusBox">
+      <strong>Status:</strong> Loading document store…
+    </div>
+
+    <section class="results">
+      <div class="results-header">
+        <h2>Results</h2>
+        <div id="resultsMeta" class="meta"></div>
+      </div>
+
+      <div id="resultList" class="result-list">
+        <div class="empty">Loading documents…</div>
+      </div>
+
+      <div class="footer-note">
+        Tip: search supports stems, partial prefixes, filename boosting, and instant search.
+      </div>
+    </section>
+  </div>
+
+  <script src="lunr.min.js"></script>
+  <script src="documents.js"></script>
+  <script>
+    if (typeof lunr !== 'undefined') {
+      lunr.tokenizer.separator = /[\s\-._/\\]+/;
+    }
+
+    const state = {
+      documents: [],
+      index: null,
+      loaded: false
+    };
+
+    const els = {
+      input: document.getElementById('searchInput'),
+      searchBtn: document.getElementById('searchBtn'),
+      clearBtn: document.getElementById('clearBtn'),
+      resultList: document.getElementById('resultList'),
+      statusBox: document.getElementById('statusBox'),
+      docCount: document.getElementById('docCount'),
+      indexState: document.getElementById('indexState'),
+      resultsMeta: document.getElementById('resultsMeta')
+    };
+
+    let searchDebounce = null;
+
+    function setStatus(message, isError = false) {
+      els.statusBox.innerHTML = `<strong>Status:</strong> ${message}`;
+      els.statusBox.style.color = isError ? '#ffb4b4' : '';
+    }
+
+    function escapeHtml(text) {
+      return String(text)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function normalizeForIndex(text) {
+      return String(text || '')
+        .replace(/[._/\\-]+/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+    }
+
+    function extractSearchTerms(query) {
+      const quoted = [...query.matchAll(/"([^"]+)"/g)].map(m => m[1].trim()).filter(Boolean);
+      const unquoted = query.replace(/"[^"]+"/g, ' ').split(/\s+/).map(s => s.trim()).filter(Boolean);
+      return [...quoted, ...unquoted];
+    }
+
+    function highlightText(text, terms) {
+      let safe = escapeHtml(text);
+      const uniqueTerms = [...new Set(terms.filter(Boolean))]
+        .sort((a, b) => b.length - a.length);
+
+      for (const term of uniqueTerms) {
+        const escapedTerm = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const regex = new RegExp(`(${escapedTerm})`, 'gi');
+        safe = safe.replace(regex, '<mark>$1</mark>');
+      }
+
+      return safe;
+    }
+
+    function makeSnippet(content, terms) {
+      const clean = String(content || '').replace(/\s+/g, ' ').trim();
+      if (!clean) return 'No preview available.';
+
+      if (!terms.length) {
+        return clean.slice(0, 240) + (clean.length > 240 ? '…' : '');
+      }
+
+      const lower = clean.toLowerCase();
+      let index = -1;
+      let matchedTerm = '';
+
+      for (const term of terms) {
+        const i = lower.indexOf(term.toLowerCase());
+        if (i !== -1 && (index === -1 || i < index)) {
+          index = i;
+          matchedTerm = term;
+        }
+      }
+
+      if (index === -1) {
+        return clean.slice(0, 240) + (clean.length > 240 ? '…' : '');
+      }
+
+      const windowBefore = 90;
+      const windowAfter = Math.max(180, matchedTerm.length + 120);
+      const start = Math.max(0, index - windowBefore);
+      const end = Math.min(clean.length, index + windowAfter);
+      const prefix = start > 0 ? '…' : '';
+      const suffix = end < clean.length ? '…' : '';
+
+      return prefix + clean.slice(start, end) + suffix;
+    }
+
+    function renderEmpty(message) {
+      els.resultList.innerHTML = `<div class="empty">${message}</div>`;
+    }
+
+    function renderResults(results, query) {
+      const terms = extractSearchTerms(query);
+
+      els.resultsMeta.textContent = query.trim()
+        ? `${results.length} match${results.length === 1 ? '' : 'es'} for “${query.trim()}”`
+        : '';
+
+      if (!results.length) {
+        renderEmpty(query.trim() ? 'No matches found.' : 'Type a query to begin searching.');
+        return;
+      }
+
+      const html = results.map(result => {
+        const doc = result.doc;
+        const snippet = makeSnippet(doc.filecontent, terms);
+        const hasLink = Boolean(doc.filelink);
+        const tagName = hasLink ? 'a' : 'article';
+        const linkAttrs = hasLink
+          ? ` href="${escapeHtml(doc.filelink)}" target="_blank" rel="noopener noreferrer"`
+          : '';
+
+        return `
+          <${tagName} class="result-card"${linkAttrs}>
+            <div class="result-top">
+              <h3 class="result-title">${highlightText(doc.filename || 'Untitled document', terms)}</h3>
+              <div class="score">Score: ${result.score.toFixed(3)}</div>
+            </div>
+            <p class="snippet">${highlightText(snippet, terms)}</p>
+          </${tagName}>
+        `;
+      }).join('');
+
+      els.resultList.innerHTML = html;
+    }
+
+    function buildIndex(documents) {
+      return lunr(function () {
+        this.ref('id');
+
+        this.field('filename_search', { boost: 8 });
+        this.field('filecontent_search', { boost: 1 });
+
+        documents.forEach(doc => this.add(doc));
+      });
+    }
+
+    function normalizeDocuments(rawDocs) {
+      if (!Array.isArray(rawDocs)) {
+        throw new Error('DOCUMENTS is not an array.');
+      }
+
+      return rawDocs.map((doc, i) => {
+        const filename = doc.filename || `document-${i + 1}`;
+        const filecontent = doc.filecontent || '';
+        const filelink = doc.filelink || '';
+
+        return {
+          id: String(i),
+          filename,
+          filelink,
+          filecontent,
+          filename_search: normalizeForIndex(filename),
+          filecontent_search: normalizeForIndex(filecontent)
+        };
+      });
+    }
+
+    function buildAdvancedQuery(rawQuery) {
+      const terms = extractSearchTerms(rawQuery);
+      if (!terms.length) return '';
+
+      const clauses = [];
+
+      for (const term of terms) {
+        const cleaned = term.trim();
+        if (!cleaned) continue;
+
+        const escaped = cleaned.replace(/"/g, '');
+
+        if (cleaned.includes(' ')) {
+          clauses.push(`filename_search:"${escaped}"^20`);
+          clauses.push(`filecontent_search:"${escaped}"^6`);
+        } else {
+          clauses.push(`filename_search:${escaped}*^12`);
+          clauses.push(`filecontent_search:${escaped}*^3`);
+        }
+      }
+
+      return clauses.join(' ');
+    }
+
+    function searchDocuments(query) {
+    if (!state.loaded || !state.index) return;
+
+    const trimmed = query.trim();
+
+    if (!trimmed) {
+        els.resultsMeta.textContent = '';
+        renderEmpty('Type a query to begin searching.');
+        setStatus(`Loaded <strong>${state.documents.length}</strong> document${state.documents.length === 1 ? '' : 's'} and built the search index.`);
+        return;
+    }
+
+    let hits = [];
+
+    // -------- FIRST: NORMAL SEARCH (STEMMING WORKS) --------
+    try {
+        hits = state.index.search(trimmed);
+    } catch (err) {
+        hits = [];
+    }
+
+    // -------- SECOND: PREFIX SEARCH FALLBACK --------
+    if (hits.length === 0 && trimmed.length >= 2) {
+        const prefixQuery = trimmed
+        .split(/\s+/)
+        .map(term => term + "*")
+        .join(" ");
+
+        try {
+        hits = state.index.search(prefixQuery);
+        } catch (err) {
+        hits = [];
+        }
+    }
+
+    const mapped = hits
+        .map(hit => ({
+        ...hit,
+        doc: state.documents.find(doc => doc.id === hit.ref)
+        }))
+        .filter(item => item.doc);
+
+    renderResults(mapped, trimmed);
+    setStatus(`Search complete for <strong>${escapeHtml(trimmed)}</strong>.`);
+    }
+
+    function loadDocuments() {
+      if (typeof lunr === 'undefined') {
+        setStatus('Lunr failed to load. Make sure <code>lunr.min.js</code> is next to <code>index.html</code>.', true);
+        els.indexState.textContent = 'Index: Failed';
+        renderEmpty('Lunr is unavailable.');
+        return;
+      }
+
+      if (typeof DOCUMENTS === 'undefined') {
+        setStatus('DOCUMENTS was not found. Make sure <code>documents.js</code> is next to <code>index.html</code> and defines <code>const DOCUMENTS = [...]</code>.', true);
+        els.indexState.textContent = 'Index: Failed';
+        renderEmpty('Document store unavailable.');
+        return;
+      }
+
+      try {
+        const documents = normalizeDocuments(DOCUMENTS);
+
+        state.documents = documents;
+        state.index = buildIndex(documents);
+        state.loaded = true;
+
+        els.docCount.textContent = `Documents: ${documents.length}`;
+        els.indexState.textContent = 'Index: Ready';
+
+        setStatus(`Loaded <strong>${documents.length}</strong> document${documents.length === 1 ? '' : 's'} and built the search index.`);
+        renderEmpty('Type a query to begin searching.');
+      } catch (error) {
+        console.error(error);
+        els.docCount.textContent = 'Documents: 0';
+        els.indexState.textContent = 'Index: Failed';
+        setStatus(`Failed to load documents: ${escapeHtml(error.message)}`, true);
+        renderEmpty('Unable to load the local document data.');
+      }
+    }
+
+    els.searchBtn.addEventListener('click', () => searchDocuments(els.input.value));
+
+    els.clearBtn.addEventListener('click', () => {
+      els.input.value = '';
+      els.input.focus();
+      els.resultsMeta.textContent = '';
+      renderEmpty('Type a query to begin searching.');
+      setStatus(
+        state.loaded
+          ? `Loaded <strong>${state.documents.length}</strong> document${state.documents.length === 1 ? '' : 's'} and built the search index.`
+          : 'Loading document store…'
+      );
+    });
+
+    els.input.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') {
+        searchDocuments(els.input.value);
+      }
+    });
+
+    els.input.addEventListener('input', () => {
+      clearTimeout(searchDebounce);
+      searchDebounce = setTimeout(() => {
+        searchDocuments(els.input.value);
+      }, 120);
+    });
+
+    loadDocuments();
+  </script>
+</body>
+</html>
