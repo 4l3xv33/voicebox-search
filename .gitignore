@@ -1,0 +1,33 @@
+# Local Codex metadata
+.agents/
+.codex/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor settings
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Python caches and virtualenvs
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+
+# Node and frontend caches
+node_modules/
+.parcel-cache/
+dist/
+build/
+coverage/
+
+# Local generated/extracted newsletter directory
+voi_newsletters/

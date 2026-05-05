@@ -310,24 +310,22 @@
     <section class="hero">
       <div class="brand">
         <div class="brand-mark"></div>
-        <div>Local Document Search</div>
+        <div>DCSA Newsletter Search</div>
       </div>
 
       <h1>VOICEBOX</h1>
 
       <p class="subtitle">
-        Search your local document set entirely in the browser. This page expects
-        <code>lunr.min.js</code> and <code>documents.js</code> beside
-        <code>index.html</code>. The <code>documents.js</code> file should define a
-        global <code>DOCUMENTS</code> array in the form
-        <code>[{ filename: "file", filecontent: "content" }]</code>.
+        Search the local monthly DCSA newsletters entirely in the browser. The PDF
+        archive is converted into a static <code>documents.js</code> index, and each
+        result opens the matching newsletter PDF from the local site.
       </p>
 
       <div class="search-panel">
         <div class="search-row">
           <div class="search-wrap">
             <span aria-hidden="true">🔎</span>
-            <input id="searchInput" type="text" placeholder="Search documents..." autocomplete="off" />
+            <input id="searchInput" type="text" placeholder="Search newsletters, topics, policies..." autocomplete="off" />
           </div>
           <button id="searchBtn" class="primary-btn">Search</button>
           <button id="clearBtn" class="secondary-btn">Clear</button>
@@ -355,7 +353,7 @@
       </div>
 
       <div class="footer-note">
-        Tip: search supports stems, partial prefixes, filename boosting, and instant search.
+        Tip: search supports stems, partial prefixes, newsletter title matching, and instant search.
       </div>
     </section>
   </div>
@@ -486,12 +484,15 @@
           ? ` href="${escapeHtml(doc.filelink)}" target="_blank" rel="noopener noreferrer"`
           : '';
 
+        const title = doc.title || doc.filename || 'Untitled document';
+
         return `
           <${tagName} class="result-card"${linkAttrs}>
             <div class="result-top">
-              <h3 class="result-title">${highlightText(doc.filename || 'Untitled document', terms)}</h3>
+              <h3 class="result-title">${highlightText(title, terms)}</h3>
               <div class="score">Score: ${result.score.toFixed(3)}</div>
             </div>
+            <p class="snippet">${highlightText(doc.filename, terms)}</p>
             <p class="snippet">${highlightText(snippet, terms)}</p>
           </${tagName}>
         `;
@@ -504,6 +505,7 @@
       return lunr(function () {
         this.ref('id');
 
+        this.field('title_search', { boost: 12 });
         this.field('filename_search', { boost: 8 });
         this.field('filecontent_search', { boost: 1 });
 
@@ -518,14 +520,17 @@
 
       return rawDocs.map((doc, i) => {
         const filename = doc.filename || `document-${i + 1}`;
+        const title = doc.title || filename;
         const filecontent = doc.filecontent || '';
         const filelink = doc.filelink || '';
 
         return {
           id: String(i),
           filename,
+          title,
           filelink,
           filecontent,
+          title_search: normalizeForIndex(title),
           filename_search: normalizeForIndex(filename),
           filecontent_search: normalizeForIndex(filecontent)
         };
@@ -545,9 +550,11 @@
         const escaped = cleaned.replace(/"/g, '');
 
         if (cleaned.includes(' ')) {
+          clauses.push(`title_search:"${escaped}"^24`);
           clauses.push(`filename_search:"${escaped}"^20`);
           clauses.push(`filecontent_search:"${escaped}"^6`);
         } else {
+          clauses.push(`title_search:${escaped}*^16`);
           clauses.push(`filename_search:${escaped}*^12`);
           clauses.push(`filecontent_search:${escaped}*^3`);
         }
